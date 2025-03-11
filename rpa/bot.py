@@ -5,6 +5,7 @@ from botcity.core import DesktopBot
 from botcity.web import WebBot, Browser, By
 
 from app import news
+from app import powerpoint
 from selenium.webdriver.common.keys import Keys
 
 def main():
@@ -19,54 +20,9 @@ def main():
     webbot.driver_path = r"webdriver\geckodriver.exe"
 
     search_text = "Dólar"
-    titles = news.get_titles_news(webbot, "Dólar")
-
-    desktop_bot.type_windows()
-    desktop_bot.paste("LibreOffice Impress")
-    desktop_bot.enter()
-    if desktop_bot.find("fechar_btn"):
-        desktop_bot.click()
-
-
-    if desktop_bot.find("title_field"):
-        desktop_bot.click()
-
-    desktop_bot.paste(f"Principais notícias sobre: {search_text}")
-
-
-    if desktop_bot.find("text_field"):
-        desktop_bot.click()
+    titles = news.get_titles_news(webbot, search_text)
+    powerpoint.create_pptx(desktop_bot, search_text, titles)
     
-    for title in titles:
-        desktop_bot.paste(title)
-        desktop_bot.enter()
-    desktop_bot.backspace()
-
-    desktop_bot.control_a()
-    for _ in range(4):
-        desktop_bot.control_key("[")
-
-    if not desktop_bot.find("formatte_bt"):
-        not_found("formatte_bt")
-        return
-    desktop_bot.click()
-
-    if desktop_bot.find("list_bt"):
-        desktop_bot.click()
-    
-    if desktop_bot.find("unordered_list_bt"):
-        desktop_bot.click()
-
-    desktop_bot.control_s()
-    desktop_bot.wait(2000)
-    desktop_bot.kb_type("novo_file")
-
-    desktop_bot.enter()
-    input()
-
-
-    webbot.wait(3000)
-
 
 def not_found(label):
     print(f"Element not found: {label}")
